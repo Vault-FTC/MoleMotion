@@ -4,7 +4,7 @@ import org.firstinspires.ftc.teamcode.geometry.Pose2D;
 
 public class Localization { //for mecanum drive bases ONLY
     private static Localization instance  = null;
-    private static Pose2D pose = new Pose2D();
+    private Pose2D pose = new Pose2D();
     private Localization() {
 
     }
@@ -15,12 +15,27 @@ public class Localization { //for mecanum drive bases ONLY
         return instance;
     }
     //TODO
-    //work out the math for localization using the 3 variables in the periodic function
-    public static void periodic(double deltaLF, double deltaRF, double deltaLB, double deltaRB) {
-        double deltaX;
-        double deltaY_right;
-        double deltaY_left;
-        pose = new Pose2D(); //should add to the previous pose value
+    //test localization
+    public void periodic() {
+        localize(0, 0, 0, 0);
+    }
+    private void localize(double deltaLF, double deltaRF, double deltaLB, double deltaRB) {
+        final double conversionConstant = 1 / DriveBase.TICKS_PER_REV * DriveBase.WHEEL_DIAMETER * Math.PI;
+        double deltaRight = (deltaRF + deltaRB) * conversionConstant / 2 * DriveBase.DRIVE_MULTIPLIER;
+        double deltaLeft = (deltaLF + deltaLB) * conversionConstant / 2 * DriveBase.DRIVE_MULTIPLIER;
+        double deltaFront = (deltaRF - deltaLF) * DriveBase.STRAFE_MULTIPLIER;
+        double deltaBack = (deltaRB - deltaLB) * DriveBase.STRAFE_MULTIPLIER;
+        double deltaStrafe = (deltaFront + deltaBack) / 2;
+        double deltaDriveHeading = deltaRight - deltaLeft;
+        double deltaStrafeHeading = deltaBack-deltaFront;
+        double newHeading = pose.getHeading() + deltaDriveHeading + deltaStrafeHeading;
+        double driveRadius = (deltaRight/deltaDriveHeading) - (DriveBase.TRACK_WIDTH / 2);
+        double driveX = driveRadius * Math.cos(newHeading) - pose.getX();
+        double driveY = driveRadius * Math.sin(newHeading) - pose.getY();
+        double strafeRadius = (deltaStrafe/deltaDriveHeading);
+        double strafeX = strafeRadius * Math.cos(newHeading) - pose.getX();
+        double strafeY = strafeRadius * Math.sin(newHeading) - pose.getY();
+        pose = new Pose2D(pose.getX() + driveX + strafeX, pose.getY() + driveY + strafeY, newHeading);
     }
     public Pose2D getPose() {
         return this.pose;
