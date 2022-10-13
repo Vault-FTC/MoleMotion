@@ -8,9 +8,9 @@ public class PIDFollower {
     Controller followerY;
     Controller followerHeading;
     public PIDFollower() {
-        followerX = new PID();
-        followerY = new PID();
-        followerHeading = new PID();
+        followerX = new PID(0.5, 0, 0.1);
+        followerY = new PID(0.5, 0, 0.1);
+        followerHeading = new PID(0.5, 0, 0.1);
     }
 
     /***
@@ -26,6 +26,23 @@ public class PIDFollower {
         Vector2D outputVector = new Vector2D(x, y);
         Vector2D outputVectorRelative = outputVector.rotate(-outputVector.getAngle()); //gets the vector relative to the bot, not the coordinate plane
         double turn = followerHeading.getOutput(pose.getHeading());
-        return new double[] {};
+        double lf = outputVectorRelative.getY() - outputVectorRelative.getX() - turn;
+        double rf = outputVectorRelative.getY() + outputVectorRelative.getX() + turn;
+        double lb = outputVectorRelative.getY() + outputVectorRelative.getX() - turn;
+        double rb = outputVectorRelative.getY() - outputVectorRelative.getX() + turn;
+        return clampedMotorOutput(lf, rf, lb, rb);
+    }
+    private double[] clampedMotorOutput(double lf, double rf, double lb, double rb) {
+        double largestFront = Math.max(Math.abs(lf), Math.abs(rf));
+        double largestBack = Math.max(Math.abs(lb), Math.abs(rb));
+        double largest = Math.max(largestFront, largestBack);
+        if (largest > 1.0) {
+            double divisor = largest / 1.0;
+            lf /= divisor;
+            rf /= divisor;
+            lb /= divisor;
+            rb /= divisor;
+        }
+        return new double[] {lf, rf, lb, rb};
     }
 }

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.follower;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.function.DoubleSupplier;
 
-public class PID implements Controller{
+public class PID implements Controller {
     private double P;
     private double I;
     private double D;
@@ -35,6 +35,9 @@ public class PID implements Controller{
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
+    }
+    public void setFeedforward(DoubleSupplier feedforward) {
+        this.feedforward = feedforward;
     }
     public void setSetpoint(double setPoint) {
         this.setPoint = setPoint;

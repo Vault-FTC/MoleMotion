@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.teamcode.follower.Drive;
 import org.firstinspires.ftc.teamcode.geometry.Pose2D;
 
 public class Localization { //for mecanum drive bases ONLY
@@ -17,9 +18,18 @@ public class Localization { //for mecanum drive bases ONLY
     //TODO
     //test localization
     public void periodic() {
-        localize(0, 0, 0, 0);
+        if(DriveBase.IMU_LOCALIZATION) {
+            imuLocalize();
+        } else {
+            mecanEncoderLocalize(0, 0, 0, 0);
+        }
     }
-    private void localize(double deltaLF, double deltaRF, double deltaLB, double deltaRB) {
+    //TODO
+    //implement IMU
+    private void imuLocalize() {
+        pose = new Pose2D();
+    }
+    private void mecanEncoderLocalize(double deltaLF, double deltaRF, double deltaLB, double deltaRB) {
         final double conversionConstant = 1 / DriveBase.TICKS_PER_REV * DriveBase.WHEEL_DIAMETER * Math.PI;
         double deltaRight = (deltaRF + deltaRB) * conversionConstant / 2 * DriveBase.DRIVE_MULTIPLIER;
         double deltaLeft = (deltaLF + deltaLB) * conversionConstant / 2 * DriveBase.DRIVE_MULTIPLIER;
