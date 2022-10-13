@@ -10,9 +10,7 @@ public class Pose2D {
         this.heading = heading;
     }
     public Pose2D() {
-        this.x = 0;
-        this.y = 0;
-        this.heading = 0;
+        this(0,0,0);
     }
     public double getX() {
         return this.x;
