@@ -3,7 +3,7 @@
 This repository contains the public FTC SDK for the Power Play (2022-2023) competition season.
 
 ## Welcome!
-This project is a path following prototype for mecanum drivebases.
+This project is a path following prototype for mecanum drivebases.  The name is a chemistry joke, if you were wondering.
 
 ## Getting Started
 If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://github.com/FIRST-Tech-Challenge/FtcRobotController/wiki/Blocks-Tutorial) to get familiar with how to use the control system:
