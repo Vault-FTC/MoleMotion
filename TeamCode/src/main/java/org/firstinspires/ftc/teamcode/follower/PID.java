@@ -42,6 +42,9 @@ public class PID implements Controller {
     public void setSetpoint(double setPoint) {
         this.setPoint = setPoint;
     }
+    public double getError() {
+        return this.error;
+    }
     @Override
     public double getOutput(double pose) {
         if (!initiated) {
@@ -50,7 +53,7 @@ public class PID implements Controller {
             dT = timer.nanoseconds() / 1e9;
         }
         timer.reset();
-        double error = setPoint - pose;
+        error = setPoint - pose;
         lastErr = error;
         this.P = kP * error;
         this.I += kI * (error-lastErr) * dT;

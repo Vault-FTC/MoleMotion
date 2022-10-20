@@ -1,14 +1,55 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.teamcode.follower.Drive;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.teamcode.geometry.Pose2D;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Localization { //for mecanum drive bases ONLY
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+
+@Disabled
+public class Localization extends OpMode { //for mecanum drive bases ONLY
     private static Localization instance  = null;
     private Pose2D pose = new Pose2D();
+    BNO055IMU.Parameters parameters;
+    Orientation angles;
+    Acceleration gravity;
+    BNO055IMU imu;
+    HardwareMap hardwareMap;
     private Localization() {
+        parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+    }
+    public void initialize() {
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 50); //dunno if a small poll interval will reduce program cycle time?  May have to sacrifice accuracy and increase it
+    }
+
+    @Override
+    public void init() {
 
     }
+
+    @Override
+    public void loop() {
+
+    }
+
     public static Localization getInstance() {
         if (instance == null) {
             instance = new Localization();
@@ -27,6 +68,7 @@ public class Localization { //for mecanum drive bases ONLY
     //TODO
     //implement IMU
     private void imuLocalize() {
+        Orientation heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         pose = new Pose2D();
     }
     private void mecanEncoderLocalize(double deltaLF, double deltaRF, double deltaLB, double deltaRB) {

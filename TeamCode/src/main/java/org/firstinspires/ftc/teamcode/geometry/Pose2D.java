@@ -24,4 +24,7 @@ public class Pose2D {
     public double[] getPose() {
         return new double[]{x, y, heading};
     }
+    public double getMagnitude() { //A Pose2D can be represented as a 3D vector.  This returns the magnitude of said vector
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(heading, 2));
+    }
 }

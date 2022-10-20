@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.geometry.Pose2D;
 import org.firstinspires.ftc.teamcode.geometry.Vector2D;
 
 public class PIDFollower {
+    public static double minErr = 1.0;
     Controller followerX;
     Controller followerY;
     Controller followerHeading;
@@ -12,11 +13,14 @@ public class PIDFollower {
         followerY = new PID(0.5, 0, 0.1);
         followerHeading = new PID(0.5, 0, 0.1);
     }
-
     /***
      * Returns the output power for 4 motors: left front, right front, left back and right back
      * @return The output power for each of the 4 motors.
      */
+    public double getError() { //returns the magnitude of the total error (which is a 3D vector)
+        Pose2D error = new Pose2D(followerX.getError(), followerY.getError(), followerHeading.getError());
+        return error.getMagnitude();
+    }
     public double[] getOutput(Pose2D pose, Pose2D target) {
         followerX.setSetpoint(target.getX());
         followerY.setSetpoint(target.getY());
@@ -24,7 +28,7 @@ public class PIDFollower {
         double x = followerX.getOutput(pose.getX());
         double y = followerY.getOutput(pose.getY());
         Vector2D outputVector = new Vector2D(x, y);
-        Vector2D outputVectorRelative = outputVector.rotate(-outputVector.getAngle()); //gets the vector relative to the bot, not the coordinate plane
+        Vector2D outputVectorRelative = outputVector.rotate(-pose.getHeading()); //gets the vector relative to the bot, not the coordinate plane
         double turn = followerHeading.getOutput(pose.getHeading());
         double lf = outputVectorRelative.getY() - outputVectorRelative.getX() - turn;
         double rf = outputVectorRelative.getY() + outputVectorRelative.getX() + turn;

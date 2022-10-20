@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class DriveBase {
-    public static final boolean IMU_LOCALIZATION = false;
+    public static final boolean IMU_LOCALIZATION = true;
     public static DcMotor leftFront;
     public static DcMotor rightFront;
     public static DcMotor leftBack;
