@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.geometry;
 
-public class Pose2D {
+public class Pose2D extends Object {
     private double x;
     private double y;
     private double heading; //radians
@@ -26,5 +26,13 @@ public class Pose2D {
     }
     public double getMagnitude() { //A Pose2D can be represented as a 3D vector.  This returns the magnitude of said vector
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(heading, 2));
+    }
+    @Override
+    public boolean equals(Object object) {
+        if (object.getClass().equals(object.getClass())) {
+            Pose2D pose = (Pose2D) object;
+            return (this.x == pose.x && this.y == pose.y && this.heading == pose.heading);
+        }
+        return false;
     }
 }

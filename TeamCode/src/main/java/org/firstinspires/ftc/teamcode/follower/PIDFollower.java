@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.geometry.Vector2D;
 
 public class PIDFollower {
     public static double minErr = 1.0;
+    private Pose2D lastTarget;
     Controller followerX;
     Controller followerY;
     Controller followerHeading;
@@ -25,6 +26,9 @@ public class PIDFollower {
         followerX.setSetpoint(target.getX());
         followerY.setSetpoint(target.getY());
         followerHeading.setSetpoint(target.getHeading());
+        if (lastTarget.equals(target)) {
+            reset();
+        }
         double x = followerX.getOutput(pose.getX());
         double y = followerY.getOutput(pose.getY());
         Vector2D outputVector = new Vector2D(x, y);
