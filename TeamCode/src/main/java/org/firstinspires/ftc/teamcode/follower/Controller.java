@@ -4,4 +4,5 @@ public interface Controller {
     void setSetpoint(double setpoint);
     double getError();
     double getOutput(double pose);
+    void reset();
 }
