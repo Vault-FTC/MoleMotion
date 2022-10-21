@@ -41,12 +41,17 @@ public class PIDFollower {
         double largestBack = Math.max(Math.abs(lb), Math.abs(rb));
         double largest = Math.max(largestFront, largestBack);
         if (largest > 1.0) {
-            double divisor = largest / 1.0;
+            double divisor = largest;
             lf /= divisor;
             rf /= divisor;
             lb /= divisor;
             rb /= divisor;
         }
         return new double[] {lf, rf, lb, rb};
+    }
+    public void reset() {
+        this.followerX.reset();
+        this.followerY.reset();
+        this.followerHeading.reset();
     }
 }

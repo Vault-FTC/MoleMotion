@@ -60,8 +60,9 @@ public class PID implements Controller {
         this.D = kD * (error-lastErr) / dT;
         return P + I + D + feedforward.getAsDouble();
     }
-    public void cancel() {
+    public void reset() {
         initiated = false;
+        lastErr = 0;
         dT = 0.05;
     }
 }

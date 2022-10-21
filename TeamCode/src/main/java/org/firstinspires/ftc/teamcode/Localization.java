@@ -3,10 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.teamcode.geometry.Pose2D;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.bosch.NaiveAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -17,12 +16,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 @Disabled
-public class Localization extends OpMode { //for mecanum drive bases ONLY
+public class Localization { //for mecanum drive bases ONLY
     private static Localization instance  = null;
     private Pose2D pose = new Pose2D();
     BNO055IMU.Parameters parameters;
-    Orientation angles;
-    Acceleration gravity;
     BNO055IMU imu;
     HardwareMap hardwareMap;
     private Localization() {
@@ -32,22 +29,13 @@ public class Localization extends OpMode { //for mecanum drive bases ONLY
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        parameters.accelerationIntegrationAlgorithm = new AccelerationIntegration();
     }
-    public void initialize() {
+    public void initialize(HardwareMap hardwareMap) {
+        this.hardwareMap = hardwareMap;
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 50); //dunno if a small poll interval will reduce program cycle time?  May have to sacrifice accuracy and increase it
-    }
-
-    @Override
-    public void init() {
-
-    }
-
-    @Override
-    public void loop() {
-
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 5); //dunno if a small poll interval will reduce program cycle time?
     }
 
     public static Localization getInstance() {
@@ -65,11 +53,10 @@ public class Localization extends OpMode { //for mecanum drive bases ONLY
             mecanEncoderLocalize(0, 0, 0, 0);
         }
     }
-    //TODO
-    //implement IMU
     private void imuLocalize() {
-        Orientation heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        pose = new Pose2D();
+        Orientation heading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+        Position position = imu.getPosition();
+        pose = new Pose2D(position.x, position.y, heading.firstAngle);
     }
     private void mecanEncoderLocalize(double deltaLF, double deltaRF, double deltaLB, double deltaRB) {
         final double conversionConstant = 1 / DriveBase.TICKS_PER_REV * DriveBase.WHEEL_DIAMETER * Math.PI;
